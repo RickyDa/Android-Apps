@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ZelDa</string>
+    <string name="scoreboard">scoreboard</string>
+    <string name="play">play</string>
+    <string name="zelda_logo">ZelDa Logo</string>
+    <string name="exit">exit</string>
+    <string name="score">SCORE:</string>
+    <string name="initial_points">0000</string>
+    <string name="player_logo">Player logo</string>
+</resources>
