@@ -48,6 +48,7 @@
             android:textStyle="bold"
             android:text="@string/score" />
 
+
         <TextView
             android:id="@+id/pointsTextView"
             android:layout_width="72dp"
@@ -100,14 +101,12 @@
         android:layout_centerVertical="true"
         app:srcCompat="@drawable/player"
         android:contentDescription="@string/player_logo" />
-
-    <TextView
-        android:id="@+id/tap_to_start"
-        android:layout_width="110dp"
+    
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textStyle="bold"
         android:text="@string/tap_to_start" />
-
 </RelativeLayout>
 

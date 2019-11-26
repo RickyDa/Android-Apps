@@ -24,15 +24,13 @@ public class GameActivity extends AppCompatActivity {
         right = findViewById(R.id.v_right);
         left = findViewById(R.id.v_left);
 
-        middle.setVisibility(View.INVISIBLE);
-        right.setVisibility(View.INVISIBLE);
-        left.setVisibility(View.INVISIBLE);
-
-        findViewById(R.id.game_layout).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                findViewById(R.id.tap_to_start).setVisibility(View.INVISIBLE);
+                middle.setVisibility(View.INVISIBLE);
+                right.setVisibility(View.INVISIBLE);
+                left.setVisibility(View.INVISIBLE);
+                findViewById(R.id.startBtn).setVisibility(View.INVISIBLE);
                 dropEndlessly();
             }
         });
