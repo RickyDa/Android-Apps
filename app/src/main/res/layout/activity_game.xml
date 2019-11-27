@@ -99,6 +99,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         app:srcCompat="@drawable/player"
         android:contentDescription="@string/player_logo" />
     
