@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
     <GridLayout
+        android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="70dp">
 
@@ -47,6 +48,7 @@
             android:textStyle="bold"
             android:text="@string/score" />
 
+
         <TextView
             android:id="@+id/pointsTextView"
             android:layout_width="72dp"
@@ -61,31 +63,34 @@
     </GridLayout>
 
     <LinearLayout
+        android:id="@+id/game_layout"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="match_parent"
         android:layout_marginTop="70dp">
-
         <View
-            android:id="@+id/v_left"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:id="@+id/v_left"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark" />
-
+            android:background="@color/colorPrimary"
+            android:layout_height="50dp"/>
         <View
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/v_middle"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorAccent"
             android:layout_height="50dp"/>
+
+
 
         <View
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/v_right"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:layout_height="50dp"/>
+
+
     </LinearLayout>
 
     <ImageView
@@ -96,5 +101,12 @@
         android:layout_centerVertical="true"
         app:srcCompat="@drawable/player"
         android:contentDescription="@string/player_logo" />
-
+    
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/tap_to_start" />
 </RelativeLayout>
+
