@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
+
     tools:context=".GameActivity">
     <GridLayout
         android:id="@+id/grid"
@@ -56,8 +57,7 @@
             android:layout_row="0"
             android:layout_column="4"
             android:gravity="center"
-            android:textStyle="bold"
-            android:text="@string/initial_points" />
+            android:textStyle="bold" />
 
 
     </GridLayout>
@@ -95,12 +95,13 @@
 
     <ImageView
         android:id="@+id/player"
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         app:srcCompat="@drawable/player"
+        android:background="@color/colorPrimary"
         android:contentDescription="@string/player_logo" />
     
     <Button
