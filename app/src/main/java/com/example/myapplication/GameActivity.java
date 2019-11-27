@@ -59,7 +59,6 @@ public class GameActivity extends AppCompatActivity {
         }, 1000);
     }
 
-
     private void drop(final View view) {
         view.animate().translationY(findViewById(R.id.game_layout)
                 .getHeight()).setDuration(500).withEndAction(new Runnable() {
