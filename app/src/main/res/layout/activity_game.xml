@@ -22,22 +22,24 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                app:srcCompat="@drawable/heart" />
+                app:srcCompat="@drawable/heart"
+                android:contentDescription="@string/heart"/>
 
             <ImageView
                 android:id="@+id/heart2"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                app:srcCompat="@drawable/heart" />
+                app:srcCompat="@drawable/heart"
+                android:contentDescription="@string/heart" />
 
             <ImageView
                 android:id="@+id/heart3"
                 android:layout_width="50dp"
                 android:layout_marginTop="15dp"
                 android:layout_height="wrap_content"
-
-                app:srcCompat="@drawable/heart" />
+                app:srcCompat="@drawable/heart"
+                android:contentDescription="@string/heart"/>
         </LinearLayout>
 
         <TextView
@@ -77,6 +79,7 @@
             android:background="@drawable/block"
             android:layout_height="50dp"
             android:contentDescription="@string/block" />
+
         <ImageView
             android:layout_width="0dp"
             android:id="@+id/v_middle"
