@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background"
     android:layout_height="match_parent"
 
     tools:context=".GameActivity">
@@ -21,22 +22,24 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                app:srcCompat="@drawable/heart" />
+                app:srcCompat="@drawable/heart"
+                android:contentDescription="@string/heart"/>
 
             <ImageView
                 android:id="@+id/heart2"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                app:srcCompat="@drawable/heart" />
+                app:srcCompat="@drawable/heart"
+                android:contentDescription="@string/heart" />
 
             <ImageView
                 android:id="@+id/heart3"
                 android:layout_width="50dp"
                 android:layout_marginTop="15dp"
                 android:layout_height="wrap_content"
-
-                app:srcCompat="@drawable/heart" />
+                app:srcCompat="@drawable/heart"
+                android:contentDescription="@string/heart"/>
         </LinearLayout>
 
         <TextView
@@ -68,27 +71,30 @@
         android:orientation="horizontal"
         android:layout_height="match_parent"
         android:layout_marginTop="70dp">
-        <View
+
+        <ImageView
             android:layout_width="0dp"
             android:id="@+id/v_left"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:layout_height="50dp"/>
-        <View
+            android:background="@drawable/block"
+            android:layout_height="50dp"
+            android:contentDescription="@string/block" />
+
+        <ImageView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:id="@+id/v_middle"
-            android:background="@color/colorAccent"
-            android:layout_height="50dp"/>
-
-
-
-        <View
-            android:layout_width="0dp"
             android:layout_weight="1"
+            android:background="@drawable/block"
+            android:layout_height="50dp"
+            android:contentDescription="@string/block" />
+
+        <ImageView
+            android:layout_width="0dp"
             android:id="@+id/v_right"
-            android:background="@color/colorPrimary"
-            android:layout_height="50dp"/>
+            android:layout_weight="1"
+            android:background="@drawable/block"
+            android:layout_height="50dp"
+            android:contentDescription="@string/block" />
 
 
     </LinearLayout>
@@ -101,7 +107,6 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         app:srcCompat="@drawable/player"
-        android:background="@color/colorPrimary"
         android:contentDescription="@string/player_logo" />
     
     <Button

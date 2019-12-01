@@ -57,7 +57,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                         int points = 0;
                         while (true) {
                             try {
-                                Thread.sleep(100);
+                                Thread.sleep(50);
                                 score.setText((points++) + "");
                             } catch (InterruptedException exception) {
                                 exception.printStackTrace();
@@ -85,7 +85,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void drop(final View view) {
         view.animate().translationY(findViewById(R.id.game_layout)
-                .getHeight()).setDuration(1000).setInterpolator(new LinearInterpolator()).withEndAction(new Runnable() {
+                .getHeight()).setDuration(700).setInterpolator(new LinearInterpolator()).withEndAction(new Runnable() {
             @Override
             public void run() {
                 view.setVisibility(View.INVISIBLE);
@@ -108,7 +108,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                             startGame.putExtra("score", score.getText().toString());
                             startActivity(startGame);
                         }
-
                     }
                 }
             }
@@ -132,18 +131,15 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             float diffY = event2.getY() - event1.getY();
             float diffX = event2.getX() - event1.getX();
             float currentLocation = player.getX();
+
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX > 0) {
-                        if (currentLocation + step < gameLayout.getWidth()) {
-                            Log.d(DEBUG_TAG, "Right");
-                            player.setX(player.getX() + step);
-                        }
+                        if (currentLocation + step < gameLayout.getWidth())
+                            player.setX(currentLocation + step);
                     } else {
-                        if (currentLocation - step > 0) {
-                            Log.d(DEBUG_TAG, "Left");
-                            player.setX(player.getX() - step);
-                        }
+                        if (currentLocation - step > 0)
+                            player.setX(currentLocation - step);
                     }
                     result = true;
                 }
