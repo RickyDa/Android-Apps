@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,26 +51,23 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 blocks[1].setVisibility(View.INVISIBLE);
                 blocks[2].setVisibility(View.INVISIBLE);
                 findViewById(R.id.startBtn).setVisibility(View.INVISIBLE);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int points = 0;
+                        while (true) {
+                            try {
+                                Thread.sleep(100);
+                                score.setText((points++) + "");
+                            } catch (InterruptedException exception) {
+                                exception.printStackTrace();
+                            }
+                        }
+                    }
+                }).start();
                 dropEndlessly();
             }
         });
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int points = 0;
-                while (true) {
-                    try {
-                        Thread.sleep(100);
-                        score.setText((points++) + "");
-                    } catch (InterruptedException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-
     }
 
     private void dropEndlessly() {
@@ -87,7 +85,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void drop(final View view) {
         view.animate().translationY(findViewById(R.id.game_layout)
-                .getHeight()).setDuration(1000).withEndAction(new Runnable() {
+                .getHeight()).setDuration(1000).setInterpolator(new LinearInterpolator()).withEndAction(new Runnable() {
             @Override
             public void run() {
                 view.setVisibility(View.INVISIBLE);
