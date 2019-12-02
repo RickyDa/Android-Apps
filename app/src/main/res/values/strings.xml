@@ -12,4 +12,6 @@
     <string name="restart">Restart</string>
     <string name="block">block</string>
     <string name="heart">Heart</string>
+    <string name="best_scores">BEST SCORES</string>
+    <string name="menu">menu</string>
 </resources>
