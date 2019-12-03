@@ -14,4 +14,7 @@
     <string name="heart">Heart</string>
     <string name="best_scores">BEST SCORES</string>
     <string name="menu">menu</string>
+    <string name="firsttrophy">firstTrophy</string>
+    <string name="secondtrophy">secondTrophy</string>
+    <string name="thirdtrophy">thirdTrophy</string>
 </resources>

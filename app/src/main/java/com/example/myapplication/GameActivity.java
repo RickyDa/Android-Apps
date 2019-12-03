@@ -106,6 +106,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                         if (livesLeft < 0) {
                             Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
                             startGame.putExtra("score", score.getText().toString());
+                            finish();
                             startActivity(startGame);
                         }
                     }

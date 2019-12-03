@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent startGame = new Intent(getApplicationContext(), GameActivity.class);
+                finish();
                 startActivity(startGame);
             }
         });
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
+                finish();
                 startActivity(showScoreboard);
             }
         });

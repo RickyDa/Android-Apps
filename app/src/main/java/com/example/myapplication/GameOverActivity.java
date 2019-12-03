@@ -25,6 +25,7 @@ public class GameOverActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), GameActivity.class));
+                finish();
             }
         });
 
@@ -33,6 +34,7 @@ public class GameOverActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
                 showScoreboard.putExtra("score",extra.getString("score"));
+                finish();
                 startActivity(showScoreboard);
             }
         });
