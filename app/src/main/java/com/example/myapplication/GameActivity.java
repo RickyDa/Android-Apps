@@ -27,7 +27,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private TextView score;
     private GestureDetectorCompat mDetector;
     private int livesLeft;
-    private static final String DEBUG_TAG = "tag";
 
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
@@ -37,20 +36,24 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
         gameLayout = findViewById(R.id.game_layout);
-        blocks = new View[]{findViewById(R.id.v_middle),findViewById(R.id.v_right),findViewById(R.id.v_left)};
+        blocks = new View[]{findViewById(R.id.v_middle), findViewById(R.id.v_right), findViewById(R.id.v_left)};
         player = findViewById(R.id.player);
-        mDetector = new GestureDetectorCompat(this, this);
         score = findViewById(R.id.pointsTextView);
-        livesLeft = 2;
         lives = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
+
+        livesLeft = 2;
+
+        mDetector = new GestureDetectorCompat(this, this);
+
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                blocks[0].setVisibility(View.INVISIBLE);
-                blocks[1].setVisibility(View.INVISIBLE);
-                blocks[2].setVisibility(View.INVISIBLE);
-                findViewById(R.id.startBtn).setVisibility(View.INVISIBLE);
+
+                hideBlocks();
+                v.setVisibility(View.INVISIBLE);
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -70,34 +73,47 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         });
     }
 
+    private void hideBlocks() {
+
+        for (View block : blocks)
+            block.setVisibility(View.INVISIBLE);
+
+    }
+
     private void dropEndlessly() {
         int blockId = new Random().nextInt(3);
         blocks[blockId].setVisibility(View.VISIBLE);
         drop(blocks[blockId]);
+
         findViewById(R.id.game_layout).postDelayed(new Runnable() {
             @Override
             public void run() {
                 dropEndlessly();
             }
-        }, 1500);
+        }, 1200);
 
     }
 
     private void drop(final View view) {
-        view.animate().translationY(findViewById(R.id.game_layout)
-                .getHeight()).setDuration(700).setInterpolator(new LinearInterpolator()).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                view.setVisibility(View.INVISIBLE);
-                view.animate().translationY(0).setDuration(0).start();
-            }
-        }).setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+        view.animate()
+                .translationY(findViewById(R.id.game_layout)
+                        .getHeight())
+                .setDuration(700)
+                .setInterpolator(new LinearInterpolator())
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setVisibility(View.INVISIBLE);
+                        view.animate().translationY(0).setDuration(0).start();
+                    }
+                }).setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 if ((player.getX() >= view.getX() && player.getX() <= view.getX() + view.getWidth())
                         &&
                         player.getY() >= view.getY() && player.getY() <= view.getY() + view.getHeight()) {
-                    Log.d(DEBUG_TAG, "**HIT**");
+
                     if (livesLeft >= 0) {
                         lives[livesLeft--].setVisibility(View.INVISIBLE);
                         view.setVisibility(View.INVISIBLE);
@@ -125,7 +141,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2,
-                           float velocityX,float velocityY) {
+                           float velocityX, float velocityY) {
         boolean result = false;
         try {
             float step = blocks[0].getWidth();

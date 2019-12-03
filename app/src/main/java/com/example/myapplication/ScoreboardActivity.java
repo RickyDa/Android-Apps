@@ -16,11 +16,12 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 public class ScoreboardActivity extends AppCompatActivity {
 
     private TextView[] scoresView;
-
+    private final String scoreFile = "Scores";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +32,12 @@ public class ScoreboardActivity extends AppCompatActivity {
 
         ArrayList<Integer> scoresFromFile = readScores();
 
-        final Bundle extra = getIntent().getExtras();
-
+        Bundle extra = getIntent().getExtras();
         if(extra != null){
-            int score = Integer.parseInt(extra.getString("score"));
+            int score = Integer.parseInt(Objects.requireNonNull(extra.getString("score")));
             scoresFromFile.add(score);
-            Collections.sort(scoresFromFile,Collections.<Integer>reverseOrder());
-            scoresFromFile.remove(3);
+
+            reorderScores(scoresFromFile);
         }
 
         showScores(scoresFromFile);
@@ -54,6 +54,13 @@ public class ScoreboardActivity extends AppCompatActivity {
 
     }
 
+    private void reorderScores(ArrayList<Integer> scoresFromFile) {
+
+        Collections.sort(scoresFromFile,Collections.<Integer>reverseOrder());
+        scoresFromFile.remove(scoresFromFile.size()-1); // the lowest number will be removed
+
+    }
+
 
     private void showScores(ArrayList<Integer> scoresFromFile) {
 
@@ -63,14 +70,15 @@ public class ScoreboardActivity extends AppCompatActivity {
     }
 
     private ArrayList<Integer> readScores() {
-
+        int scoreSize = 4;
         FileInputStream fis;
         ObjectInputStream is;
-        ArrayList<Integer> scores = new ArrayList<>(4);
+        ArrayList<Integer> scores = new ArrayList<>(scoreSize);
 
         try {
-            fis = getApplicationContext().openFileInput("Scores");
+            fis = getApplicationContext().openFileInput(scoreFile);
         } catch (FileNotFoundException e) {
+            // in case the file does not exist, generate minimal scores.
             scores.add(100);
             scores.add(90);
             scores.add(80);
@@ -96,7 +104,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         ObjectOutputStream os;
 
         try {
-            fos = getApplicationContext().openFileOutput("Scores", MODE_PRIVATE);
+            fos = getApplicationContext().openFileOutput(scoreFile, MODE_PRIVATE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

@@ -50,6 +50,7 @@
             android:layout_column="3"
             android:gravity="center"
             android:textStyle="bold"
+            android:textSize="20sp"
             android:text="@string/score" />
 
 
@@ -60,6 +61,7 @@
             android:layout_row="0"
             android:layout_column="4"
             android:gravity="center"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
 
@@ -106,6 +108,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
         app:srcCompat="@drawable/player"
         android:contentDescription="@string/player_logo" />
     
