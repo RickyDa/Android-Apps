@@ -1,13 +1,11 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-public class GameOverActivity extends AppCompatActivity {
+public class GameOverActivity extends MyAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

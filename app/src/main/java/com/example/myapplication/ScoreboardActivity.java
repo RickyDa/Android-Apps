@@ -1,7 +1,5 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
-public class ScoreboardActivity extends AppCompatActivity {
+public class ScoreboardActivity extends MyAppCompatActivity {
 
     private TextView[] scoresView;
     private final String scoreFile = "Scores";

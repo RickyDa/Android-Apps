@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
 import android.animation.ValueAnimator;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener {
+public class GameActivity extends MyAppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener {
 
     private LinearLayout gameLayout;
 
@@ -34,7 +33,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         gameLayout = findViewById(R.id.game_layout);
         blocks = new View[]{findViewById(R.id.v_middle), findViewById(R.id.v_right), findViewById(R.id.v_left)};
         player = findViewById(R.id.player);
@@ -202,5 +201,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onDown(MotionEvent event) {
         return true;
     }
+
+
 
 }
