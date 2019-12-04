@@ -6,7 +6,6 @@ import androidx.core.view.GestureDetectorCompat;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,7 +30,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,34 +42,38 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         lives = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
 
         livesLeft = 2;
-
         mDetector = new GestureDetectorCompat(this, this);
 
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                hideBlocks();
                 v.setVisibility(View.INVISIBLE);
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int points = 0;
-                        while (true) {
-                            try {
-                                Thread.sleep(50);
-                                score.setText((points++) + "");
-                            } catch (InterruptedException exception) {
-                                exception.printStackTrace();
-                            }
-                        }
-                    }
-                }).start();
+                hideBlocks();
+                startScoreAnimation();
+
                 dropEndlessly();
             }
         });
+
+
     }
+
+    private void startScoreAnimation() {
+        final int scoreDuration = 1000000;
+        ValueAnimator scoreAnimation = ValueAnimator.ofInt(0, scoreDuration / 10);// /10 for slower animation
+        scoreAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int animatedValue = (int) animation.getAnimatedValue();
+                score.setText(String.valueOf(animatedValue));
+                score.requestLayout();
+            }
+        });
+        scoreAnimation.setInterpolator(new LinearInterpolator());
+        scoreAnimation.setDuration(scoreDuration).start();
+    }
+
 
     private void hideBlocks() {
 
@@ -107,28 +109,30 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                         view.setVisibility(View.INVISIBLE);
                         view.animate().translationY(0).setDuration(0).start();
                     }
-                }).setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                if ((player.getX() >= view.getX() && player.getX() <= view.getX() + view.getWidth())
-                        &&
-                        player.getY() >= view.getY() && player.getY() <= view.getY() + view.getHeight()) {
+                })
+                .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-                    if (livesLeft >= 0) {
-                        lives[livesLeft--].setVisibility(View.INVISIBLE);
-                        view.setVisibility(View.INVISIBLE);
-                        view.animate().translationY(0).setDuration(0).start();
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if ((player.getX() >= view.getX() && player.getX() <= view.getX() + view.getWidth())
+                                && player.getY() >= view.getY() && player.getY() <= view.getY() + view.getHeight()) {
 
-                        if (livesLeft < 0) {
-                            Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
-                            startGame.putExtra("score", score.getText().toString());
-                            finish();
-                            startActivity(startGame);
+                            if (livesLeft >= 0) {
+                                lives[livesLeft--].setVisibility(View.INVISIBLE);
+                                view.setVisibility(View.INVISIBLE);
+                                view.animate().translationY(0).setDuration(0).start();
+
+                                if (livesLeft < 0) {
+                                    Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
+                                    startGame.putExtra("score", score.getText().toString());
+                                    finish();
+                                    startActivity(startGame);
+                                }
+                            }
                         }
                     }
-                }
-            }
-        }).start();
+                })
+                .start();
     }
 
     @Override
@@ -158,6 +162,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                         if (currentLocation - step > 0)
                             player.setX(currentLocation - step);
                     }
+
                     result = true;
                 }
             }
