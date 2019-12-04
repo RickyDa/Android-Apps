@@ -3,16 +3,12 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,7 +29,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
     private static final int SWIPE_THRESHOLD = 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-    private ObjectAnimator animator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +42,11 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         lives = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
 
         livesLeft = 2;
-        animator = ObjectAnimator.ofFloat(player, "translationX", 0f);
         mDetector = new GestureDetectorCompat(this, this);
 
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 v.setVisibility(View.INVISIBLE);
 
                 hideBlocks();
