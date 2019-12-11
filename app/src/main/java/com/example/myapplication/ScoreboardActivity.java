@@ -1,6 +1,4 @@
 package com.example.myapplication;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -43,9 +41,7 @@ public class ScoreboardActivity extends MyAppCompatActivity {
         findViewById(R.id.menuBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent menu = new Intent(getApplicationContext(), MainActivity.class);
                 finish();
-                startActivity(menu);
             }
         });
 
@@ -119,3 +115,4 @@ public class ScoreboardActivity extends MyAppCompatActivity {
 
 
 }
+

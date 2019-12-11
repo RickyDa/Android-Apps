@@ -1,61 +1,126 @@
 package com.example.myapplication;
 
-import androidx.core.view.GestureDetectorCompat;
-
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.GestureDetector;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Random;
 
-public class GameActivity extends MyAppCompatActivity implements View.OnTouchListener, GestureDetector.OnGestureListener {
+public class GameActivity extends MyAppCompatActivity implements View.OnTouchListener {
 
-    private LinearLayout gameLayout;
+    private ViewGroup gameLayout;
+    private ViewGroup blockLayout;
 
-    private View[] blocks;
     private ImageView player;
-    private ImageView[] lives;
-    private TextView score;
-    private GestureDetectorCompat mDetector;
-    private int livesLeft;
+    private ImageView[] hearts;
 
-    private static final int SWIPE_THRESHOLD = 100;
-    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+    private TextView score;
+
+    private int screenHeight;
+    private int screenWidth;
+
+    private final int SIZE_BLOCK = 150;
+    private int livesLeft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        gameLayout = findViewById(R.id.game_layout);
-        blocks = new View[]{findViewById(R.id.v_middle), findViewById(R.id.v_right), findViewById(R.id.v_left)};
-        player = findViewById(R.id.player);
-        score = findViewById(R.id.pointsTextView);
-        lives = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
 
-        livesLeft = 2;
-        mDetector = new GestureDetectorCompat(this, this);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        this.screenHeight = metrics.heightPixels;
+        this.screenWidth = metrics.widthPixels;
+        this.livesLeft = 2;
+        this.gameLayout = findViewById(R.id.gameLayout);
+        this.player = findViewById(R.id.player);
+        this.score = findViewById(R.id.pointsTextView);
+        this.blockLayout = findViewById(R.id.blockLayout);
+        this.hearts = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
+        this.gameLayout.setOnTouchListener(this);
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setVisibility(View.INVISIBLE);
-
-                hideBlocks();
                 startScoreAnimation();
-
                 dropEndlessly();
             }
         });
 
+    }
 
+    private void dropEndlessly() {
+        drop();
+        blockLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dropEndlessly();
+            }
+        }, 1200);
+
+    }
+
+    public void drop() {
+
+        final ImageView block = createBlock();
+        blockLayout.addView(block);
+        block.animate()
+                .translationY(screenHeight)
+                .setDuration(3000)
+                .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+
+                        if ((player.getX() <= block.getX() + SIZE_BLOCK && block.getX() <= player.getX() + player.getWidth())
+                                && (player.getY() <= block.getY() + SIZE_BLOCK && block.getY() <= player.getY() + player.getHeight())) {
+
+                            if (livesLeft >= 0) {
+                                hearts[livesLeft--].setVisibility(View.INVISIBLE);
+
+                                if (livesLeft < 0) {
+                                    Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
+                                    startGame.putExtra("score", score.getText().toString());
+                                    finish();
+                                    startActivity(startGame);
+                                }
+                                animation.end();
+                            }
+
+                        }
+                    }
+                })
+                .setInterpolator(new LinearInterpolator()
+                ).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        blockLayout.removeView(block);
+                    }
+        }).start();
+
+
+    }
+
+    public final ImageView createBlock() {
+
+        ImageView newBlock = new ImageView(this);
+
+        newBlock.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        newBlock.setImageResource(R.drawable.block);
+        newBlock.getLayoutParams().height = SIZE_BLOCK;
+        newBlock.getLayoutParams().width = SIZE_BLOCK;
+        newBlock.setX(new Random().nextInt(screenWidth - SIZE_BLOCK));
+        newBlock.setBackgroundColor(Color.rgb(100, 100, 50));
+        return newBlock;
     }
 
     private void startScoreAnimation() {
@@ -74,134 +139,12 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
     }
 
 
-    private void hideBlocks() {
-
-        for (View block : blocks)
-            block.setVisibility(View.INVISIBLE);
-
-    }
-
-    private void dropEndlessly() {
-        int blockId = new Random().nextInt(3);
-        blocks[blockId].setVisibility(View.VISIBLE);
-        drop(blocks[blockId]);
-
-        findViewById(R.id.game_layout).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dropEndlessly();
-            }
-        }, 1200);
-
-    }
-
-    private void drop(final View view) {
-
-        view.animate()
-                .translationY(findViewById(R.id.game_layout)
-                        .getHeight())
-                .setDuration(700)
-                .setInterpolator(new LinearInterpolator())
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.setVisibility(View.INVISIBLE);
-                        view.animate().translationY(0).setDuration(0).start();
-                    }
-                })
-                .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        if ((player.getX() >= view.getX() && player.getX() <= view.getX() + view.getWidth())
-                                && player.getY() >= view.getY() && player.getY() <= view.getY() + view.getHeight()) {
-
-                            if (livesLeft >= 0) {
-                                lives[livesLeft--].setVisibility(View.INVISIBLE);
-                                view.setVisibility(View.INVISIBLE);
-                                view.animate().translationY(0).setDuration(0).start();
-
-                                if (livesLeft < 0) {
-                                    Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
-                                    startGame.putExtra("score", score.getText().toString());
-                                    finish();
-                                    startActivity(startGame);
-                                }
-                            }
-                        }
-                    }
-                })
-                .start();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2,
-                           float velocityX, float velocityY) {
-        boolean result = false;
-        try {
-            float step = blocks[0].getWidth();
-            float diffY = event2.getY() - event1.getY();
-            float diffX = event2.getX() - event1.getX();
-            float currentLocation = player.getX();
-
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        if (currentLocation + step < gameLayout.getWidth())
-                            player.setX(currentLocation + step);
-                    } else {
-                        if (currentLocation - step > 0)
-                            player.setX(currentLocation - step);
-                    }
-
-                    result = true;
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return result;
-    }
-
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        mDetector.onTouchEvent(event);
+        float x = event.getX();
+
+        if (event.getAction() == MotionEvent.ACTION_MOVE)
+            player.setX(x - (player.getWidth() / 2f));
         return true;
     }
-
-    @Override
-    public void onLongPress(MotionEvent event) {
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent event1, MotionEvent event2, float distanceX,
-                            float distanceY) {
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent event) {
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent event) {
-        return true;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent event) {
-        return true;
-    }
-
-
-
 }

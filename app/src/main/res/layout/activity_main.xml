@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/bg3"
     tools:context=".MainActivity">
 
     <Button
         android:id="@+id/playBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="450dp"
+        android:layout_centerHorizontal="true"
         android:paddingLeft="100dp"
         android:paddingRight="100dp"
         android:text="@string/play" />
@@ -21,28 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/playBtn"
-        android:layout_centerVertical="true"
         android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:paddingLeft="72dp"
         android:paddingRight="72dp"
         android:text="@string/scoreboard" />
-
-    <Button
-        android:id="@+id/exitBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/scoreboardBtn"
-        android:layout_centerInParent="true"
-        android:text="@string/exit" />
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/playBtn"
-        android:layout_centerInParent="true"
-        android:contentDescription="@string/zelda_logo"
-        app:srcCompat="@drawable/logo" />
 
 
 </RelativeLayout>

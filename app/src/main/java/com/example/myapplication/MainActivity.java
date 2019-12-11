@@ -17,7 +17,6 @@ public class MainActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent startGame = new Intent(getApplicationContext(), GameActivity.class);
-                finish();
                 startActivity(startGame);
             }
         });
@@ -27,18 +26,10 @@ public class MainActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
-                finish();
                 startActivity(showScoreboard);
             }
         });
 
-        Button exitBtn = findViewById(R.id.exitBtn);
-        exitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                System.exit(0);
-            }
-        });
+
     }
 }
