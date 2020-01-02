@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -16,19 +15,22 @@ import java.util.Random;
 
 public class GameActivity extends MyAppCompatActivity implements View.OnTouchListener {
 
-    private ViewGroup gameLayout;
     private ViewGroup blockLayout;
 
     private ImageView player;
     private ImageView[] hearts;
 
-    private TextView score;
+    private TextView scoreView;
+
+    private int livesLeft;
+    private int bonusPoints;
 
     private int screenHeight;
     private int screenWidth;
 
     private final int SIZE_BLOCK = 150;
-    private int livesLeft;
+    private final long fallingDuaration =3000;
+    public static String TAG = "GameActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +43,14 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
         this.screenHeight = metrics.heightPixels;
         this.screenWidth = metrics.widthPixels;
         this.livesLeft = 2;
-        this.gameLayout = findViewById(R.id.gameLayout);
+
         this.player = findViewById(R.id.player);
-        this.score = findViewById(R.id.pointsTextView);
+        this.scoreView = findViewById(R.id.pointsTextView);
         this.blockLayout = findViewById(R.id.blockLayout);
         this.hearts = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
-        this.gameLayout.setOnTouchListener(this);
+
+        this.bonusPoints = 0;
+        findViewById(R.id.gameLayout).setOnTouchListener(this);
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,58 +73,85 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
 
     }
 
-    public void drop() {
+    private void drop() {
+        int randValue = new Random().nextInt(screenWidth - SIZE_BLOCK);
 
-        final ImageView block = createBlock();
-        blockLayout.addView(block);
-        block.animate()
+        if (randValue % 5 == 0)
+            createBonus(randValue);
+        else
+            createBlock(randValue);
+
+    }
+
+    private ImageView createFallingObject(int location, int id){
+        final ImageView bonus = new ImageView(this);
+
+        bonus.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        bonus.setImageResource(id);
+        bonus.getLayoutParams().height = SIZE_BLOCK;
+        bonus.getLayoutParams().width = SIZE_BLOCK;
+        bonus.setX(location);
+//        bonus.setBackgroundColor(Color.rgb(100, 100, 50)); // Draw hit box
+
+        blockLayout.addView(bonus);
+        return bonus;
+    }
+
+    private void createBonus(int location) {
+        final ImageView bonus = createFallingObject(location,R.drawable.shmeckels);
+        bonus.animate()
                 .translationY(screenHeight)
-                .setDuration(3000)
+                .setDuration(fallingDuaration)
                 .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-
-                        if ((player.getX() <= block.getX() + SIZE_BLOCK && block.getX() <= player.getX() + player.getWidth())
-                                && (player.getY() <= block.getY() + SIZE_BLOCK && block.getY() <= player.getY() + player.getHeight())) {
-
-                            if (livesLeft >= 0) {
-                                hearts[livesLeft--].setVisibility(View.INVISIBLE);
-
-                                if (livesLeft < 0) {
-                                    Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
-                                    startGame.putExtra("score", score.getText().toString());
-                                    finish();
-                                    startActivity(startGame);
-                                }
-                                animation.end();
-                            }
-
+                        if (isCollided(player, bonus)) {
+                            bonusPoints += 1000;
+                            animation.end();
                         }
                     }
                 })
                 .setInterpolator(new LinearInterpolator()
                 ).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        blockLayout.removeView(block);
-                    }
+            @Override
+            public void run() {
+                blockLayout.removeView(bonus);
+            }
         }).start();
-
-
     }
 
-    public final ImageView createBlock() {
+    private void createBlock(int location) {
 
-        ImageView newBlock = new ImageView(this);
+        final ImageView block = createFallingObject(location,R.drawable.block);
+        block.animate()
+                .translationY(screenHeight)
+                .setDuration(fallingDuaration)
+                .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-        newBlock.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        newBlock.setImageResource(R.drawable.block);
-        newBlock.getLayoutParams().height = SIZE_BLOCK;
-        newBlock.getLayoutParams().width = SIZE_BLOCK;
-        newBlock.setX(new Random().nextInt(screenWidth - SIZE_BLOCK));
-        newBlock.setBackgroundColor(Color.rgb(100, 100, 50));
-        return newBlock;
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if (isCollided(player, block)) {
+                            if (livesLeft >= 0) {
+                                hearts[livesLeft--].setVisibility(View.INVISIBLE);
+                                if (livesLeft < 0) {
+                                    Intent startGame = new Intent(getApplicationContext(), GameOverActivity.class);
+                                    startGame.putExtra("scoreView", scoreView.getText().toString());
+                                    finish();
+                                    startActivity(startGame);
+                                }
+                                animation.end();
+                            }
+                        }
+                    }
+                })
+                .setInterpolator(new LinearInterpolator()
+                ).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                blockLayout.removeView(block);
+            }
+        }).start();
     }
 
     private void startScoreAnimation() {
@@ -129,15 +160,20 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
         scoreAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                int animatedValue = (int) animation.getAnimatedValue();
-                score.setText(String.valueOf(animatedValue));
-                score.requestLayout();
+                int animatedScoreValue = (int) animation.getAnimatedValue();
+                scoreView.setText(String.valueOf(animatedScoreValue + bonusPoints));
+                scoreView.requestLayout();
+
             }
         });
         scoreAnimation.setInterpolator(new LinearInterpolator());
         scoreAnimation.setDuration(scoreDuration).start();
     }
 
+    private boolean isCollided(View v1, View v2) {
+        return (v1.getX() <= v2.getX() + SIZE_BLOCK) && (v2.getX() <= v1.getX() + v1.getWidth())
+                && (v1.getY() <= v2.getY() + SIZE_BLOCK) && (v2.getY() <= v1.getY() + v1.getHeight());
+    }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
