@@ -7,6 +7,7 @@ import android.widget.Button;
 
 public class MainActivity extends MyAppCompatActivity {
 
+    private Button controlBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,6 +18,10 @@ public class MainActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent startGame = new Intent(getApplicationContext(), GameActivity.class);
+                if(controlBtn.getText() == DRAG_CONTROL)
+                    startGame.putExtra(CONTROLS, true);
+                else
+                    startGame.putExtra(CONTROLS, false);
                 startActivity(startGame);
             }
         });
@@ -27,6 +32,17 @@ public class MainActivity extends MyAppCompatActivity {
             public void onClick(View v) {
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
                 startActivity(showScoreboard);
+            }
+        });
+        this.controlBtn = findViewById(R.id.controlBtn);
+        this.controlBtn.setText(DRAG_CONTROL);
+        this.controlBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(controlBtn.getText() == DRAG_CONTROL)
+                    controlBtn.setText(SENSOR_CONTROL);
+                else
+                    controlBtn.setText(DRAG_CONTROL);
             }
         });
 

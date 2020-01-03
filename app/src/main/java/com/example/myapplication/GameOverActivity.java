@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 public class GameOverActivity extends MyAppCompatActivity {
 
+    private String score;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -14,7 +16,7 @@ public class GameOverActivity extends MyAppCompatActivity {
         final Bundle extra = getIntent().getExtras();
 
         if(extra != null){
-            String score = extra.getString("score");
+            this.score = extra.getString(EXT_SCORE);
             TextView result = findViewById(R.id.result);
             result.setText(score);
         }
@@ -31,7 +33,7 @@ public class GameOverActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
-                showScoreboard.putExtra("score",extra.getString("score"));
+                showScoreboard.putExtra(EXT_SCORE,score);
                 finish();
                 startActivity(showScoreboard);
             }

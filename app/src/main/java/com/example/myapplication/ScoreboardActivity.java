@@ -29,7 +29,7 @@ public class ScoreboardActivity extends MyAppCompatActivity {
 
         Bundle extra = getIntent().getExtras();
         if(extra != null){
-            int score = Integer.parseInt(Objects.requireNonNull(extra.getString("score")));
+            int score = Integer.parseInt(Objects.requireNonNull(extra.getString(EXT_SCORE)));
             scoresFromFile.add(score);
 
             reorderScores(scoresFromFile);
