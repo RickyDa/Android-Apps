@@ -89,6 +89,6 @@ public class GameOverActivity extends MyAppCompatActivity {
         userScore.setScore(score);
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference().child("Score");
-        mRef.child(userScore.getUserName()).setValue(userScore);
+        mRef.push().setValue(userScore);
     }
 }
