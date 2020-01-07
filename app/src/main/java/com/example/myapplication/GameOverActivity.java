@@ -65,7 +65,6 @@ public class GameOverActivity extends MyAppCompatActivity {
         resetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveScoreToDb(editTextValue, Integer.parseInt(score));
                 startActivity(new Intent(getApplicationContext(), GameActivity.class));
                 finish();
             }
@@ -74,21 +73,21 @@ public class GameOverActivity extends MyAppCompatActivity {
         scoreBoardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveScoreToDb(editTextValue, Integer.parseInt(score));
+                saveScore(editTextValue, Integer.parseInt(score));
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
-                showScoreboard.putExtra(EXT_SCORE,userScore.getUserName());
+                showScoreboard.putExtra(USER_DATA,userScore);
                 finish();
                 startActivity(showScoreboard);
             }
         });
     }
 
-    public void saveScoreToDb(String name,int score) {
+    public void saveScore(String name,int score) {
         userScore = new Score();
         userScore.setUserName(name);
         userScore.setScore(score);
         mDatabase = FirebaseDatabase.getInstance();
         mRef = mDatabase.getReference().child("Score");
-        mRef.push().setValue(userScore);
+
     }
 }

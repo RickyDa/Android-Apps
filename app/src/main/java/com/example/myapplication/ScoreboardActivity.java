@@ -28,21 +28,23 @@ import java.util.List;
 public class ScoreboardActivity extends MyAppCompatActivity implements OnMapReadyCallback {
 
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private Query mGetReference = mDatabase.getReference().child("Score").orderByChild("score");
-    private String userName;
+    private Query mGetReference;
 
     private GoogleMap mMap;
     private float lat;
     private float lng;
-
+    private final String DB_CHILD = "Score";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
         final List<Score> list = new ArrayList<>();
+        Score userScore;
         Bundle extra = getIntent().getExtras();
         if(extra != null){
-            userName = extra.getString(EXT_SCORE);
+          userScore = (Score)getIntent().getSerializableExtra(USER_DATA);
+        }else{
+            Toast.makeText(this,"some error occurred", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -55,22 +57,22 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-
+        this.mGetReference = mDatabase.getReference().child(DB_CHILD).orderByChild(EXT_SCORE);
         mGetReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                /*
                 if(dataSnapshot != null) {
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     for (DataSnapshot child : children){
                         list.add(child.getValue(Score.class));
                     }
-                }
+                }*/
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-        Log.d("Itay",list.size()+"");
     }
 
     @Override

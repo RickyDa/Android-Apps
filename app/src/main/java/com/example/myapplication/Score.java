@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
-public class Score  {
+import java.io.Serializable;
+
+public class Score implements Serializable {
     private String userName;
     private int score;
     private int x;
