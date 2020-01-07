@@ -6,8 +6,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,33 +27,36 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class ScoreboardActivity extends MyAppCompatActivity {
+public class ScoreboardActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference mGetReference = mDatabase.getReference().child("Score");
     private String userID;
     private ArrayList<Score> list = new ArrayList<>();
 
+    private GoogleMap mMap;
+    private float lat;
+    private float lng;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
 
 
-
         Bundle extra = getIntent().getExtras();
         if(extra != null){
-            userID = extra.getString(EXT_SCORE);
+            userID = extra.getString(MyAppCompatActivity.EXT_SCORE);
         }
 
-        TextView tx1 = findViewById(R.id.first_score);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        this.lat = -34;
+        this.lng = 151;
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
-        findViewById(R.id.menuBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         mGetReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -67,6 +77,16 @@ public class ScoreboardActivity extends MyAppCompatActivity {
         });
 
        // Log.d("Hello",list.get(0).getUserName()+"");
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(lat, lng);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Your Location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
 
