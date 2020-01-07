@@ -1,42 +1,45 @@
 package com.example.myapplication;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import androidx.annotation.NonNull;
+
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class ScoreboardActivity extends MyAppCompatActivity {
 
-    private TextView[] scoresView;
-    private final String scoreFile = "Scores";
+    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference mGetReference = mDatabase.getReference().child("Score");
+    private String userID;
+    private ArrayList<Score> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
 
-        scoresView = new TextView[]{findViewById(R.id.first_score), findViewById(R.id.second_score), findViewById(R.id.third_score)};
 
-        ArrayList<Integer> scoresFromFile = readScores();
 
         Bundle extra = getIntent().getExtras();
         if(extra != null){
-            int score = Integer.parseInt(Objects.requireNonNull(extra.getString(EXT_SCORE)));
-            scoresFromFile.add(score);
-
-            reorderScores(scoresFromFile);
+            userID = extra.getString(EXT_SCORE);
         }
 
-        showScores(scoresFromFile);
-        saveScores(scoresFromFile);
+        TextView tx1 = findViewById(R.id.first_score);
 
         findViewById(R.id.menuBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,74 +48,26 @@ public class ScoreboardActivity extends MyAppCompatActivity {
             }
         });
 
+        mGetReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                for (DataSnapshot child : children){
+                    Score singleScore = child.getValue(Score.class);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+       // Log.d("Hello",list.get(0).getUserName()+"");
     }
-
-    private void reorderScores(ArrayList<Integer> scoresFromFile) {
-
-        Collections.sort(scoresFromFile,Collections.<Integer>reverseOrder());
-        scoresFromFile.remove(scoresFromFile.size()-1); // the lowest number will be removed
-
-    }
-
-
-    private void showScores(ArrayList<Integer> scoresFromFile) {
-
-        for (int i = 0; i < scoresFromFile.size(); i++)
-            scoresView[i].setText(String.valueOf(scoresFromFile.get(i)));
-
-    }
-
-    private ArrayList<Integer> readScores() {
-        int scoreSize = 4;
-        FileInputStream fis;
-        ObjectInputStream is;
-        ArrayList<Integer> scores = new ArrayList<>(scoreSize);
-
-        try {
-            fis = getApplicationContext().openFileInput(scoreFile);
-        } catch (FileNotFoundException e) {
-            // in case the file does not exist, generate minimal scores.
-            scores.add(100);
-            scores.add(90);
-            scores.add(80);
-            return scores;
-        }
-
-        try {
-            is = new ObjectInputStream(fis);
-            scores = (ArrayList<Integer>) is.readObject();
-            is.close();
-            if (fis != null)
-                fis.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return scores;
-    }
-
-    private void saveScores(ArrayList<Integer> scores) {
-
-        FileOutputStream fos = null;
-        ObjectOutputStream os;
-
-        try {
-            fos = getApplicationContext().openFileOutput(scoreFile, MODE_PRIVATE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            os = new ObjectOutputStream(fos);
-            os.writeObject(scores);
-            os.close();
-            if (fos != null)
-                fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }
+
 
