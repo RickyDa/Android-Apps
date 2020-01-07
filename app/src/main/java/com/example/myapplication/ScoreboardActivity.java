@@ -3,15 +3,9 @@ package com.example.myapplication;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,32 +15,24 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
-import android.widget.TextView;
-import android.widget.Toast;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
@@ -66,6 +52,8 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     int PERMISSION_ID = 44;
     private FusedLocationProviderClient mFusedLocationClient;
 
+    private Score userScore;
+
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -75,19 +63,11 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
         final List<Score> list = new ArrayList<>();
-        Score userScore;
-        Bundle extra = getIntent().getExtras();
-        if (extra != null) {
-            userScore = (Score) getIntent().getSerializableExtra(USER_DATA);
-        } else {
-            Toast.makeText(this, "some error occurred", Toast.LENGTH_SHORT).show();
-        }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -96,6 +76,13 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
+
+        Bundle extra = getIntent().getExtras();
+        if (extra != null) {
+            userScore = (Score) getIntent().getSerializableExtra(USER_DATA);
+        } else {
+            userScore = null;
+        }
 
         this.mGetReference = mDatabase.getReference().child(DB_CHILD).orderByChild(EXT_SCORE);
         mGetReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -114,6 +101,13 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
+        findViewById(R.id.menuBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
@@ -122,7 +116,6 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
     }
-
 
     @SuppressLint("MissingPermission")
     private void getLastLocation() {
@@ -138,6 +131,10 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
                                 } else {
                                     lat = location.getLatitude();
                                     lng = location.getLongitude();
+                                    if (userScore != null) {
+                                        userScore.setY(lat);
+                                        userScore.setX(lng);
+                                    }
                                     show();
                                 }
                             }
@@ -153,11 +150,12 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         }
     }
 
-    private void show(){
+    private void show() {
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
     }
+
     @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
 
@@ -172,9 +170,7 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
                 mLocationRequest, mLocationCallback,
                 Looper.myLooper()
         );
-
     }
-
 
     private boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -212,7 +208,6 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         if (checkPermissions()) {
             getLastLocation();
         }
-
     }
 }
 
