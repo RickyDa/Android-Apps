@@ -32,27 +32,25 @@ public class ScoreboardActivity extends MyAppCompatActivity {
         setContentView(R.layout.activity_scoreboard);
         final List<Score> list = new ArrayList<>();
         Bundle extra = getIntent().getExtras();
-
         if(extra != null){
             userName = extra.getString(EXT_SCORE);
         }
 
-
-        mGetReference.addValueEventListener(new ValueEventListener() {
+        mGetReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                for (DataSnapshot child : children){
-                    list.add(child.getValue(Score.class));
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null) {
+                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                    for (DataSnapshot child : children){
+                        list.add(child.getValue(Score.class));
+                    }
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
-
+        Log.d("Itay",list.size()+"");
     }
 }
 
