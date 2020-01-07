@@ -32,18 +32,11 @@ public class ScoreboardActivity extends MyAppCompatActivity {
         setContentView(R.layout.activity_scoreboard);
         final List<Score> list = new ArrayList<>();
         Bundle extra = getIntent().getExtras();
+
         if(extra != null){
             userName = extra.getString(EXT_SCORE);
         }
 
-        TextView tx1 = findViewById(R.id.first_score);
-
-        findViewById(R.id.menuBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         mGetReference.addValueEventListener(new ValueEventListener() {
             @Override
