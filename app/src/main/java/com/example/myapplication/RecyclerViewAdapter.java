@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +21,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<Integer> imagesId;
     private ArrayList<Score> scores;
     private Context mContext;
+    private Score userScore;
 
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<Integer> imagesId, ArrayList<Score> scores) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<Integer> imagesId, ArrayList<Score> scores,Score userScore) {
         this.imagesId = imagesId;
         this.scores = scores;
         this.mContext = mContext;
+        this.userScore = userScore;
     }
 
     @NonNull
@@ -45,6 +48,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.name.setText(scores.get(position).getUserName());
         holder.score.setText(String.valueOf(scores.get(position).getScore()));
+        if(scores.get(position).getScore() == userScore.getScore() &&
+                scores.get(position).getUserName().equals(userScore.getUserName())){
+            holder.itemLayout.setBackgroundColor(Color.YELLOW);
+        }
 
 //        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
 //            @Override

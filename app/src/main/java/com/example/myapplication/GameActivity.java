@@ -8,7 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +74,7 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
         this.hearts = new ImageView[]{findViewById(R.id.heart1), findViewById(R.id.heart2), findViewById(R.id.heart3)};
 
         this.bonusPoints = 0;
-        this.x_player = screenWidth / 2;
+        this.x_player = 0;
         //
 
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
@@ -239,9 +238,17 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-
             x_player -= 5 * event.values[0];
-            this.player.animate().translationX(x_player).setDuration(0).start();
+            if(x_player > screenWidth- player.getWidth())
+                x_player = screenWidth - player.getWidth();
+            if(x_player < 0)
+                x_player = 0;
+            this.player.animate().translationX(x_player).setDuration(0).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    player.setX(x_player);
+                }
+            }).start();
         }
     }
 

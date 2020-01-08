@@ -194,7 +194,7 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         img.add(R.drawable.default_img);
         img.add(R.drawable.default_img);
         img.add(R.drawable.default_img);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, list);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, list, userScore);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
