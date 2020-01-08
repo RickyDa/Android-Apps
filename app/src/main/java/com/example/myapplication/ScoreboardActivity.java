@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Context;
@@ -40,6 +43,7 @@ import java.util.List;
 
 public class ScoreboardActivity extends MyAppCompatActivity implements OnMapReadyCallback {
 
+    private static final String TAG = "ScoreboardActivity";
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     private Query mGetReference;
 
@@ -49,19 +53,13 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     private double lng;
     private final String DB_CHILD = "Score";
 
-    int PERMISSION_ID = 44;
+    private int PERMISSION_ID = 44;
     private FusedLocationProviderClient mFusedLocationClient;
 
     private Score userScore;
 
-    private LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
-            lat = mLastLocation.getLatitude();
-            lng = mLastLocation.getLongitude();
-        }
-    };
+    private LocationCallback mLocationCallback;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +69,19 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Location mLastLocation = locationResult.getLastLocation();
+                lat = mLastLocation.getLatitude();
+                lng = mLastLocation.getLongitude();
+            }
+        };
+
         getLastLocation();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
 
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
@@ -108,6 +114,8 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
                 finish();
             }
         });
+
+
     }
 
     @Override
@@ -154,6 +162,49 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+        initScoreboard();
+    }
+
+    private void initScoreboard() {
+        Log.d(TAG, "initRecyclerView: init recyclerview.");
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        ArrayList<String> mNames = new ArrayList<>() ;
+        mNames.add("a");
+        mNames.add("b");
+        mNames.add("c");
+        mNames.add("d");
+        mNames.add("e");
+        mNames.add("f");
+        mNames.add("g");
+        mNames.add("h");
+        mNames.add("i");
+        mNames.add("j");
+        ArrayList<String> score = new ArrayList<>() ;
+        score.add("1");
+        score.add("2");
+        score.add("3");
+        score.add("4");
+        score.add("5");
+        score.add("6");
+        score.add("7");
+        score.add("8");
+        score.add("9");
+        score.add("10");
+        ArrayList<Integer> img = new ArrayList<>();
+        img.add(R.drawable.first);
+        img.add(R.drawable.second);
+        img.add(R.drawable.third);
+        img.add(R.drawable.fourth);
+        img.add(R.drawable.fifth);
+        img.add(R.drawable.default_img);
+        img.add(R.drawable.default_img);
+        img.add(R.drawable.default_img);
+        img.add(R.drawable.default_img);
+        img.add(R.drawable.default_img);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, mNames, score);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @SuppressLint("MissingPermission")
