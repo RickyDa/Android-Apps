@@ -25,7 +25,7 @@ public class GameOverActivity extends MyAppCompatActivity {
         resetBtn = findViewById(R.id.resetBtn);
         scoreBoardBtn = findViewById(R.id.scoreboardBtn);
 
-        EditText textInput = (EditText) findViewById(R.id.nameInput);
+        EditText textInput = findViewById(R.id.nameInput);
         resetBtn.setEnabled(false);
         scoreBoardBtn.setEnabled(false);
 
@@ -75,7 +75,7 @@ public class GameOverActivity extends MyAppCompatActivity {
         });
     }
 
-    public void initScore(String name, int score) {
+    private void initScore(String name, int score) {
         userScore = new Score();
         userScore.setUserName(name);
         userScore.setScore(score);

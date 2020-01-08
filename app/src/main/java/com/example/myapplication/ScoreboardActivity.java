@@ -48,8 +48,6 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     private static final String TAG = "ScoreboardActivity";
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference mGetReference;
-    private Query mDbQuery;
-    private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private double lat;
     private double lng;
@@ -105,23 +103,21 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
 
 
         this.mGetReference = mDatabase.getReference().child(DB_CHILD);
-        this.mDbQuery = mGetReference.orderByChild(EXT_SCORE).limitToLast(10);
-        this.mDbQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query mDbQuery = mGetReference.orderByChild(EXT_SCORE).limitToLast(10);
+        mDbQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot != null) {
-                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                    for (DataSnapshot child : children) {
-                        scores.add(child.getValue(Score.class));
-                    }
-                    Collections.reverse(scores);
-                    initScoreboard();
+                Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                for (DataSnapshot child : children) {
+                    scores.add(child.getValue(Score.class));
                 }
+                Collections.reverse(scores);
+                initScoreboard();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 
@@ -135,16 +131,15 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
 
     }
 
-    public void saveScoreToDb() {
+    private void saveScoreToDb() {
         this.mGetReference = mDatabase.getReference().child(DB_CHILD);
         this.mGetReference.push().setValue(userScore);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.mMap = googleMap;
-        this.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your Location"));
-        this.mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your Location"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
     }
 
     @SuppressLint("MissingPermission")
@@ -230,9 +225,12 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
 
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-                LocationManager.NETWORK_PROVIDER
-        );
+        if (locationManager != null) {
+            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                    LocationManager.NETWORK_PROVIDER
+            );
+        }
+        return false;
     }
 
     @Override
