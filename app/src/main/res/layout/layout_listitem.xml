@@ -18,7 +18,7 @@
     android:id="@+id/name"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="TextView"
+    android:text="@string/textview"
     android:layout_toEndOf="@id/image"
     android:textColor="#000"
     android:layout_centerVertical="true"
@@ -29,7 +29,7 @@
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="score"
+        android:text="@string/score"
         android:layout_toEndOf="@id/name"
         android:textColor="#000"
         android:layout_centerVertical="true"
@@ -40,9 +40,9 @@
         android:layout_height="2dp"
         android:background="@android:color/black" />
     <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_alignBottom="@id/image"
-        android:background="@android:color/black" />
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:layout_alignBottom="@id/image"
+    android:background="@android:color/black" />
 
 </RelativeLayout>

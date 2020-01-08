@@ -40,6 +40,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class ScoreboardActivity extends MyAppCompatActivity implements OnMapReadyCallback {
@@ -60,16 +61,26 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     private Score userScore;
     private int LAST_ID;
     private LocationCallback mLocationCallback;
-    private ArrayList<Score> list = new ArrayList<>();
+    private ArrayList<Score> scores;
+
+    private final ArrayList<Integer> img = new ArrayList<>(
+            Arrays.asList
+                    (R.drawable.first, R.drawable.second, R.drawable.third,
+                            R.drawable.fourth, R.drawable.fifth,
+                            R.drawable.default_img, R.drawable.default_img,
+                            R.drawable.default_img, R.drawable.default_img,
+                            R.drawable.default_img));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        this.scores = new ArrayList<>();
 
-        mLocationCallback = new LocationCallback() {
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        this.mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 Location mLastLocation = locationResult.getLastLocation();
@@ -93,18 +104,18 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         }
 
 
-        mGetReference = mDatabase.getReference().child(DB_CHILD);
-        mDbQuery = mGetReference.orderByChild(EXT_SCORE).limitToLast(10);
-        mDbQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        this.mGetReference = mDatabase.getReference().child(DB_CHILD);
+        this.mDbQuery = mGetReference.orderByChild(EXT_SCORE).limitToLast(10);
+        this.mDbQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot != null) {
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     for (DataSnapshot child : children) {
-                        list.add(child.getValue(Score.class));
+                        scores.add(child.getValue(Score.class));
                     }
-                    Collections.reverse(list);
+                    Collections.reverse(scores);
                     initScoreboard();
                 }
             }
@@ -125,15 +136,15 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     }
 
     public void saveScoreToDb() {
-        mGetReference = mDatabase.getReference().child(DB_CHILD);
-        mGetReference.push().setValue(userScore);
+        this.mGetReference = mDatabase.getReference().child(DB_CHILD);
+        this.mGetReference.push().setValue(userScore);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
+        this.mMap = googleMap;
+        this.mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your Location"));
+        this.mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
     }
 
     @SuppressLint("MissingPermission")
@@ -173,8 +184,8 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     }
 
     private void show() {
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
+        if (this.mapFragment != null) {
+            this.mapFragment.getMapAsync(this);
         }
         initScoreboard();
     }
@@ -183,18 +194,7 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        ArrayList<Integer> img = new ArrayList<>();
-        img.add(R.drawable.first);
-        img.add(R.drawable.second);
-        img.add(R.drawable.third);
-        img.add(R.drawable.fourth);
-        img.add(R.drawable.fifth);
-        img.add(R.drawable.default_img);
-        img.add(R.drawable.default_img);
-        img.add(R.drawable.default_img);
-        img.add(R.drawable.default_img);
-        img.add(R.drawable.default_img);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, list, userScore);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, scores, userScore);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -208,9 +208,9 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         mLocationRequest.setFastestInterval(0);
         mLocationRequest.setNumUpdates(1);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationClient.requestLocationUpdates(
-                mLocationRequest, mLocationCallback,
+        this.mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        this.mFusedLocationClient.requestLocationUpdates(
+                mLocationRequest, this.mLocationCallback,
                 Looper.myLooper()
         );
     }

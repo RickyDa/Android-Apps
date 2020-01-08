@@ -42,14 +42,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: called.");
-
         holder.image.setImageResource(imagesId.get(position));
 
         holder.name.setText(scores.get(position).getUserName());
         holder.score.setText(String.valueOf(scores.get(position).getScore()));
-        if(scores.get(position).getScore() == userScore.getScore() &&
-                scores.get(position).getUserName().equals(userScore.getUserName())){
+
+        if(userScore != null && scores.get(position).getScore() == userScore.getScore() &&
+                scores.get(position).getUserName().equals(userScore.getUserName()) ){
             holder.itemLayout.setBackgroundColor(Color.YELLOW);
         }
 
