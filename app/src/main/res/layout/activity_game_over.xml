@@ -39,7 +39,7 @@
         android:layout_marginBottom="50dp"
         android:background="#A5A5A5"
         android:padding="10dp"
-        android:hint="Please enter your name"
+        android:hint="@string/please_enter_your_name"
         android:inputType="textPersonName"
         android:selectAllOnFocus="true" />
 

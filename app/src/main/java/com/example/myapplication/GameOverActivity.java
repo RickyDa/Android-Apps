@@ -9,17 +9,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 public class GameOverActivity extends MyAppCompatActivity {
 
     private String score;
     private String editTextValue;
     private Button resetBtn;
     private Button scoreBoardBtn;
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference mRef;
     private Score userScore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +65,7 @@ public class GameOverActivity extends MyAppCompatActivity {
         scoreBoardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveScore(editTextValue, Integer.parseInt(score));
+                initScore(editTextValue, Integer.parseInt(score));
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
                 showScoreboard.putExtra(USER_DATA,userScore);
                 showScoreboard.putExtra(ID,DEF_TAG);
@@ -80,12 +75,9 @@ public class GameOverActivity extends MyAppCompatActivity {
         });
     }
 
-    public void saveScore(String name,int score) {
+    public void initScore(String name, int score) {
         userScore = new Score();
         userScore.setUserName(name);
         userScore.setScore(score);
-        mDatabase = FirebaseDatabase.getInstance();
-        mRef = mDatabase.getReference().child("Score");
-
     }
 }
