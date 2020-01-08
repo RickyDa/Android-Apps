@@ -18,15 +18,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private static final String TAG = "RecyclerViewAdapter";
     private ArrayList<Integer> imagesId;
-    private ArrayList<String> names;
-    private ArrayList<String> score;
+    private ArrayList<Score> scores;
     private Context mContext;
 
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<Integer> imagesId, ArrayList<String> names, ArrayList<String> score) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<Integer> imagesId, ArrayList<Score> scores) {
         this.imagesId = imagesId;
-        this.names = names;
-        this.score = score;
+        this.scores = scores;
         this.mContext = mContext;
     }
 
@@ -45,8 +43,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.image.setImageResource(imagesId.get(position));
 
-        holder.name.setText(names.get(position));
-        holder.score.setText(score.get(position));
+        holder.name.setText(scores.get(position).getUserName());
+        holder.score.setText(String.valueOf(scores.get(position).getScore()));
 
 //        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -65,16 +63,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return names.size();
+        return scores.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
         private TextView name;
         private TextView score;
         private RelativeLayout itemLayout;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.image = itemView.findViewById(R.id.image);
             this.name = itemView.findViewById(R.id.name);

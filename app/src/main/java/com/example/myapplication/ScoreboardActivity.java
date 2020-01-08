@@ -1,12 +1,29 @@
 package com.example.myapplication;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -14,39 +31,23 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.os.Looper;
-import android.provider.Settings;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class ScoreboardActivity extends MyAppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG = "ScoreboardActivity";
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private Query mGetReference;
-
+    private DatabaseReference mGetReference;
+    private Query mDbQuery;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private double lat;
@@ -57,15 +58,14 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     private FusedLocationProviderClient mFusedLocationClient;
 
     private Score userScore;
-
+    private int LAST_ID;
     private LocationCallback mLocationCallback;
-
+    private ArrayList<Score> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
-        final List<Score> list = new ArrayList<>();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -80,27 +80,33 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
 
         getLastLocation();
 
+
         this.mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             userScore = (Score) getIntent().getSerializableExtra(USER_DATA);
+            LAST_ID = extra.getInt(ID);
         } else {
             userScore = null;
         }
 
-        this.mGetReference = mDatabase.getReference().child(DB_CHILD).orderByChild(EXT_SCORE);
-        mGetReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mGetReference = mDatabase.getReference().child(DB_CHILD);
+        mDbQuery = mGetReference.orderByChild(EXT_SCORE).limitToLast(10);
+        mDbQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                /*
-                if(dataSnapshot != null) {
+
+                if (dataSnapshot != null) {
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                    for (DataSnapshot child : children){
+                    for (DataSnapshot child : children) {
                         list.add(child.getValue(Score.class));
                     }
-                }*/
+                    Collections.reverse(list);
+                    initScoreboard();
+                }
             }
 
             @Override
@@ -116,6 +122,11 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         });
 
 
+    }
+
+    public void saveScoreToDb() {
+        mGetReference = mDatabase.getReference().child(DB_CHILD);
+        mGetReference.push().setValue(userScore);
     }
 
     @Override
@@ -143,6 +154,9 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
                                         userScore.setY(lat);
                                         userScore.setX(lng);
                                     }
+                                    if (LAST_ID == DEF_TAG) {
+                                        saveScoreToDb();
+                                    }
                                     show();
                                 }
                             }
@@ -169,28 +183,6 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        ArrayList<String> mNames = new ArrayList<>() ;
-        mNames.add("a");
-        mNames.add("b");
-        mNames.add("c");
-        mNames.add("d");
-        mNames.add("e");
-        mNames.add("f");
-        mNames.add("g");
-        mNames.add("h");
-        mNames.add("i");
-        mNames.add("j");
-        ArrayList<String> score = new ArrayList<>() ;
-        score.add("1");
-        score.add("2");
-        score.add("3");
-        score.add("4");
-        score.add("5");
-        score.add("6");
-        score.add("7");
-        score.add("8");
-        score.add("9");
-        score.add("10");
         ArrayList<Integer> img = new ArrayList<>();
         img.add(R.drawable.first);
         img.add(R.drawable.second);
@@ -202,7 +194,7 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
         img.add(R.drawable.default_img);
         img.add(R.drawable.default_img);
         img.add(R.drawable.default_img);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, mNames, score);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, img, list);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -250,14 +242,6 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastLocation();
             }
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (checkPermissions()) {
-            getLastLocation();
         }
     }
 }

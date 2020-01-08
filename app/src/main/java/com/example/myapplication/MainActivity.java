@@ -35,6 +35,7 @@ public class MainActivity extends MyAppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent showScoreboard = new Intent(getApplicationContext(), ScoreboardActivity.class);
+                showScoreboard.putExtra(ID,MAIN_TAG);
                 startActivity(showScoreboard);
             }
         });
