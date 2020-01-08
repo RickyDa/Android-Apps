@@ -243,9 +243,9 @@ public class GameActivity extends MyAppCompatActivity implements View.OnTouchLis
                 x_player = screenWidth - player.getWidth();
             if(x_player < 0)
                 x_player = 0;
-            this.player.animate().translationX(x_player).setDuration(0).withEndAction(new Runnable() {
+            this.player.animate().translationX(x_player).setDuration(0).setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
-                public void run() {
+                public void onAnimationUpdate(ValueAnimator animation) {
                     player.setX(x_player);
                 }
             }).start();
