@@ -24,6 +24,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,7 +53,7 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     private double lat;
     private double lng;
     private final String DB_CHILD = "Score";
-
+    private final int CAMER_ZOOM = 10;
     private int PERMISSION_ID = 44;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -140,6 +141,7 @@ public class ScoreboardActivity extends MyAppCompatActivity implements OnMapRead
     public void onMapReady(GoogleMap googleMap) {
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title("Your Location"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lng)));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(CAMER_ZOOM));
     }
 
     @SuppressLint("MissingPermission")
